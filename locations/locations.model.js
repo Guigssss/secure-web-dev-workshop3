@@ -14,7 +14,7 @@ const filmSchema = new mongoose.Schema({
 	filmDirectorName: String,
 	address: String,
 	startDate: Date,
-	year: Number,
+	year: Number
 })
 
 const Location = mongoose.model('Location', filmSchema)
