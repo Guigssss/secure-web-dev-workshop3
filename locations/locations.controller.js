@@ -9,8 +9,15 @@ router.get('/', (req, res) => {
 })
 
 router.get('/locations', async (req, res) => {
-    const locations = await locationsService.findAll()
-    return res.status(200).send(locations)
+    try {
+        const locations = await locationsService.findAll()
+        return res.status(200).send(locations)
+    } catch (e) {
+        if (e.message === "Not Found") {
+            return res.status(404).send(e.message)
+        }
+        return res.status(400).send("Bad Request")
+    }
 })
 
 router.get('/locations/:id', async (req, res) => {
@@ -19,24 +26,35 @@ router.get('/locations/:id', async (req, res) => {
         return res.status(200).send(locations)
     } catch (e) {
         if (e.message === "Not Found") {
-            return res.status(404).send(e.toString())
+            return res.status(404).send(e.message)
         }
         return res.status(400).send("Bad Request")
     }
 })
 
 router.post('/locations', async (req, res) => {
-    const locations = await locationsService.addLocation({
-        ...req.body,
-        endDate: new Date(req.body?.endDate),
-        startDate: new Date(req.body?.startDate)
-    })
-    return res.status(201).send(locations)
+    try {
+        const locations = await locationsService.addLocation({
+            ...req.body,
+            endDate: new Date(req.body?.endDate),
+            startDate: new Date(req.body?.startDate)
+        })
+        return res.status(201).send(locations)
+    } catch (e) {
+        return res.status(400).send("Bad Request")
+    }
 })
 
 router.delete('/locations/:id', async (req, res) => {
-    const locations = await locationsService.deleteOne(req.params.id)
-    return res.status(200).send(locations)
+    try {
+        const locations = await locationsService.deleteOne(req.params.id)
+        return res.status(200).send(locations)
+    } catch (e) {
+        if (e.message === "Not Found") {
+            return res.status(404).send(e.message)
+        }
+        return res.status(400).send("Bad Request")
+    }
 })
 router.put('/locations/:id', async (req, res) => {
     const body = {...req.body, endDate: new Date(req.body?.endDate), startDate: new Date(req.body?.startDate)}

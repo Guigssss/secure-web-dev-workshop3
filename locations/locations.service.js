@@ -2,8 +2,12 @@
 
 const Location = require('./locations.model')
 
-function findAll () {
-	return Location.find()
+async function findAll () {
+	const location = await Location.find()
+	if(!location){
+		throw new Error("Not Found");
+	}
+	return location
 }
 
 async function findOne(idInMongo){
@@ -14,11 +18,18 @@ async function findOne(idInMongo){
 	return location
 }
 async function addLocation(locationData){
-	const location = await new Location(locationData)
-	return location.save();
+	try{
+		const location = await new Location(locationData)
+		return location.save();
+	}
+	catch(e){
+		throw new Error("Missing mandatory field")
+	}
 }
-function deleteOne(idInMongo) {
-	return Location.findOneAndDelete({_id:idInMongo})
+async function deleteOne(idInMongo) {
+	const location = await findOne(idInMongo)
+	return location.remove()
+	//return Location.findOneAndDelete({_id:idInMongo})
 }
 
 function updateLocation(id,location){
