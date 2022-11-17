@@ -6,11 +6,15 @@ function findAll () {
 	return Location.find()
 }
 
-function findOne(idInMongo){
-	return Location.findById(idInMongo)
+async function findOne(idInMongo){
+	const location = await Location.findById(idInMongo)
+	if(!location){
+		throw new Error("Not Found");
+	}
+	return location
 }
-function addLocation(locationData){
-	const location = new Location(locationData)
+async function addLocation(locationData){
+	const location = await new Location(locationData)
 	return location.save();
 }
 function deleteOne(idInMongo) {
