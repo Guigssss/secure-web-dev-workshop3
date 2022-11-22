@@ -1,5 +1,6 @@
 const express = require('express')
 const locationController = require('./locations/locations.controller')
+const userController = require('./Users/user.controller')
 const app = express()
 const port = 3000
 const bodyParser = require('body-parser')
