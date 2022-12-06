@@ -16,6 +16,9 @@ async function addUser(userData) {
 }
 async function checkPassword(username,password){
     const user = await User.findOne({name:username})
+    if(!user){
+        return
+    }
     const match = await bcrypt.compare(password, user.password)
     if(!match){
         return false
