@@ -2,6 +2,8 @@ const router = require('express').Router()
 const userService = require('./user.service')
 const passport = require("passport");
 const authorizationMiddleware = require("../Authorization/authorization.middleware")
+const jwt = require("jsonwebtoken");
+require('dotenv').config()
 
 router.post('/users/register', async (req, res) => {
     try {
@@ -14,20 +16,22 @@ router.post('/users/register', async (req, res) => {
 
 router.post('/users/login',
     passport.authenticate('local',{session:false}),
-    //authorizationMiddleware.canAccess(['admin']),
+    authorizationMiddleware.canAccess(['admin']),
     async(req,res)=>{
-        res.status(200).send(req.user)
+        res.status(200).send("Token : " + await userService.generateJWT(req.user.id))
     }
 )
 
-router.get('/users/me', (req, res) => {
-    return res.status(200).send()
+router.get('/users/me', passport.authenticate('jwt',{session:false}),(req, res) => {
+    const user = req.user.toObject()
+    delete user.password
+    return res.status(200).send(user);
 })
-router.put('/users/me', (req, res) => {
-    return res.status(200).send()
+router.put('/users/me', async (req, res) => {
+    return res.status(200).send(await userService.updateUser(req.user, req.body));
 })
-router.delete('/users/me', (req, res) => {
-    return res.status(200).send()
+router.delete('/users/me', async (req, res) => {
+    return res.status(200).send(await(userService.deleteUser(req.user)));
 })
 router.get('/users', async (req, res) => {
     return res.status(200).send({users: await userService.findAll()})

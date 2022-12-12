@@ -1,5 +1,7 @@
 const User = require('./user.model')
 const bcrypt = require('bcrypt')
+require('dotenv').config()
+const jwt = require('jsonwebtoken')
 
 function findAll(){
     return User.find({})
@@ -25,6 +27,32 @@ async function checkPassword(username,password){
     }
     return user
 }
+
+async function generateJWT(username) {
+    return jwt.sign({sub:username}, process.env.JWT_SECRET);
+}
+
+async function getUser(id) {
+    return await User.findOne({id}).select("-password");
+}
+
+async function getUserByName(username) {
+    return await User.findOne({name:username});
+}
+
+async function updateUser(username, userData) {
+    await User.findOneAndUpdate({name:username}, userData);
+    return await getUserByName(username);
+}
+
+async function deleteUser(username) {
+    return await User.findOneAndDelete({name : username});
+}
+
 module.exports.addUser = addUser
 module.exports.findAll = findAll
 module.exports.checkPassword = checkPassword
+module.exports.getUser = getUser
+module.exports.updateUser = updateUser
+module.exports.deleteUser = deleteUser
+module.exports.generateJWT = generateJWT

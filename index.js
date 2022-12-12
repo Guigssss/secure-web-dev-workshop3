@@ -6,6 +6,7 @@ const port = 3000
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const localStrategy = require("./PassportStrategies/localStrategy")
+const jwtStrategy = require("./PassportStrategies/jwtStrategy")
 require('dotenv').config()
 app.use(bodyParser.json())
 app.use(locationController)
