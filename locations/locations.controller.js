@@ -3,12 +3,13 @@
 
 const router = require('express').Router()
 const locationsService = require('./locations.service')
+const passport = require("passport");
 
 router.get('/', (req, res) => {
     return res.status(200).send("Hello World")
 })
 
-router.get('/locations', async (req, res) => {
+router.get('/locations', passport.authenticate('jwt',{session:false}), async (req, res) => {
     try {
         const locations = await locationsService.findAll()
         return res.status(200).send(locations)
@@ -20,7 +21,7 @@ router.get('/locations', async (req, res) => {
     }
 })
 
-router.get('/locations/:id', async (req, res) => {
+router.get('/locations/:id', passport.authenticate('jwt',{session:false}), async (req, res) => {
     try {
         const locations = await locationsService.findOne(req.params.id)
         return res.status(200).send(locations)
@@ -32,7 +33,7 @@ router.get('/locations/:id', async (req, res) => {
     }
 })
 
-router.post('/locations', async (req, res) => {
+router.post('/locations', passport.authenticate('jwt',{session:false}), async (req, res) => {
     try {
         const locations = await locationsService.addLocation({
             ...req.body,
@@ -45,7 +46,7 @@ router.post('/locations', async (req, res) => {
     }
 })
 
-router.delete('/locations/:id', async (req, res) => {
+router.delete('/locations/:id', passport.authenticate('jwt',{session:false}), async (req, res) => {
     try {
         const locations = await locationsService.deleteOne(req.params.id)
         return res.status(200).send(locations)
@@ -56,7 +57,7 @@ router.delete('/locations/:id', async (req, res) => {
         return res.status(400).send("Bad Request")
     }
 })
-router.put('/locations/:id', async (req, res) => {
+router.put('/locations/:id',passport.authenticate('jwt',{session:false}), async (req, res) => {
     const body = {...req.body, endDate: new Date(req.body?.endDate), startDate: new Date(req.body?.startDate)}
     const locations = await locationsService.updateLocation(req.params.id, body)
     return res.status(200).send(locations)

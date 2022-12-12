@@ -4,7 +4,7 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken')
 
 function findAll(){
-    return User.find({})
+    return User.find({}).select("-password")
 }
 async function addUser(userData) {
     try {
