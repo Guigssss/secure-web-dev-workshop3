@@ -16,7 +16,6 @@ router.post('/users/register', async (req, res) => {
 
 router.post('/users/login',
     passport.authenticate('local',{session:false}),
-    authorizationMiddleware.canAccess(['admin']),
     async(req,res)=>{
         res.status(200).send("Token : " + await userService.generateJWT(req.user.id))
     }
@@ -27,13 +26,14 @@ router.get('/users/me', passport.authenticate('jwt',{session:false}),(req, res) 
     delete user.password
     return res.status(200).send(user);
 })
+
 router.put('/users/me',passport.authenticate('jwt',{session:false}), async (req, res) => {
     return res.status(200).send(await userService.updateUser(req.user.name, req.body));
 })
 router.delete('/users/me', passport.authenticate('jwt',{session:false}), async (req, res) => {
     return res.status(200).send(await(userService.deleteUser(req.user.name)));
 })
-router.get('/users', async (req, res) => {
+router.get('/users', passport.authenticate('jwt',{session:false}), authorizationMiddleware.canAccess(['admin']),async (req, res) => {
     return res.status(200).send({users: await userService.findAll()})
 })
 module.exports = router
