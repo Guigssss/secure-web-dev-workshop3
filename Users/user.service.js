@@ -41,8 +41,14 @@ async function getUserByName(username) {
 }
 
 async function updateUser(username, userData) {
-    await User.findOneAndUpdate({name:username}, userData);
-    return await getUserByName(username);
+    try {
+        const hash = await bcrypt.hash(userData.password, 10)
+        await User.findOneAndUpdate({name:username},{...userData, password:hash} );
+        return await getUserByName(username);
+    } catch (e) {
+        console.log(e)
+        throw new Error("Error when updating")
+    }
 }
 
 async function deleteUser(username) {

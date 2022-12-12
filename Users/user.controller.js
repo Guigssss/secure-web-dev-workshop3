@@ -27,11 +27,11 @@ router.get('/users/me', passport.authenticate('jwt',{session:false}),(req, res) 
     delete user.password
     return res.status(200).send(user);
 })
-router.put('/users/me', async (req, res) => {
-    return res.status(200).send(await userService.updateUser(req.user, req.body));
+router.put('/users/me',passport.authenticate('jwt',{session:false}), async (req, res) => {
+    return res.status(200).send(await userService.updateUser(req.user.name, req.body));
 })
-router.delete('/users/me', async (req, res) => {
-    return res.status(200).send(await(userService.deleteUser(req.user)));
+router.delete('/users/me', passport.authenticate('jwt',{session:false}), async (req, res) => {
+    return res.status(200).send(await(userService.deleteUser(req.user.name)));
 })
 router.get('/users', async (req, res) => {
     return res.status(200).send({users: await userService.findAll()})
