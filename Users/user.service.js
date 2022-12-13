@@ -33,7 +33,7 @@ async function generateJWT(id) {
 }
 
 async function getUser(id) {
-    return await User.findOne({id}).select("-password");
+    return await User.findOne({_id:id}).select("-password");
 }
 
 async function getUserByName(username) {
@@ -46,7 +46,6 @@ async function updateUser(username, userData) {
         await User.findOneAndUpdate({name:username},{...userData, password:hash} );
         return await getUserByName(username);
     } catch (e) {
-        console.log(e)
         throw new Error("Error when updating")
     }
 }

@@ -17,7 +17,7 @@ router.post('/users/register', async (req, res) => {
 router.post('/users/login',
     passport.authenticate('local',{session:false}),
     async(req,res)=>{
-        res.status(200).send("Token : " + await userService.generateJWT(req.user.id))
+        res.status(200).send("Token : " + await userService.generateJWT(req.user._id))
     }
 )
 
@@ -29,10 +29,11 @@ router.get('/users/me', passport.authenticate('jwt',{session:false}),(req, res) 
 
 router.put('/users/me',passport.authenticate('jwt',{session:false}), async (req, res) => {
     try {
-        return res.status(200).send(await userService.updateUser(req.user.name, req.body));
+        const result = await userService.updateUser(req.user.name, req.body)
+        return res.status(200).send(result);
     }
     catch (e) {
-        return res.status(400)
+        return res.status(400).send(e.message)
     }
 })
 
