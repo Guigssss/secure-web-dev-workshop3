@@ -28,8 +28,8 @@ async function checkPassword(username,password){
     return user
 }
 
-async function generateJWT(username) {
-    return jwt.sign({sub:username}, process.env.JWT_SECRET);
+async function generateJWT(id) {
+    return jwt.sign({sub:id}, process.env.JWT_SECRET);
 }
 
 async function getUser(id) {
